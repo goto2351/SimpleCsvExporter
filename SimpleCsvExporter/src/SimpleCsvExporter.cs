@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using Cysharp.Text;
 
 namespace SimpleCsvExporter
 {
@@ -12,7 +13,32 @@ namespace SimpleCsvExporter
     /// </summary>
     public class SimpleCsvExporter
     {
+        private const string SEPARATOR = ",";
+
         public  void ExportCsv<T>(IEnumerable<T> dataList, string filePath)
+        {
+            // CsvColumn属性が付いたフィールドを取得する
+            var targetFieldArray = GetTargeFields<T>();
+
+            // CSVの内容を作成する
+            var csvStringBuilder = ZString.CreateStringBuilder();
+
+            // ヘッダー
+            csvStringBuilder.AppendLine(CreateHeader(targetFieldArray));
+            // レコード
+            csvStringBuilder.AppendLine(CreateRecord<T>(targetFieldArray, dataList));
+
+            // CSVを出力する
+            using (var writer = new StreamWriter(filePath))
+            {
+                writer.Write(csvStringBuilder.ToString());
+            }
+        }
+
+        /// <summary>
+        /// 出力対象のフィールドのFieldInfoを取得
+        /// </summary>
+        private FieldInfo[] GetTargeFields<T>()
         {
             var targetType = typeof(T);
             // CsvColumn属性が付いたフィールドを取得する
@@ -20,28 +46,37 @@ namespace SimpleCsvExporter
                 .Where(x => x.GetCustomAttribute<CsvColumn>() != null)
                 .ToArray();
 
-            // カラム名
-            var columnNameArray = targetFieldArray.Select(x => x.GetCustomAttribute<CsvColumn>()?.Name)
-                .ToArray();
+            return targetFieldArray;
+        }
 
-            // CSVを出力する
-            using (var writer = new StreamWriter(filePath))
+        /// <summary>
+        /// ヘッダー行を作成
+        /// </summary>
+        private string CreateHeader(FieldInfo[] fieldArray)
+        {
+            var columnNameArray = fieldArray.Select(x => x.GetCustomAttribute<CsvColumn>()?.Name).ToArray();
+            return ZString.Join(SEPARATOR, columnNameArray);
+        }
+
+        /// <summary>
+        /// レコード行を作成
+        /// </summary>
+        private string CreateRecord<T>(FieldInfo[] fieldArray, IEnumerable<T> dataList)
+        {
+            var recordStringBuilder = ZString.CreateStringBuilder();
+
+            foreach (var item in dataList)
             {
-                // ヘッダー
-                writer.WriteLine(string.Join(",", columnNameArray));
-
-                // レコード
-                foreach (var item in dataList)
+                var valueArray = fieldArray.Select(field =>
                 {
-                    var valueArray = targetFieldArray.Select(field =>
-                    {
-                        var dataValueStr = field.GetValue(item)?.ToString() ?? string.Empty;
-                        return ToCsvRecordValue(dataValueStr);
-                    }).ToArray();
+                    var dataValueStr = field.GetValue(item)?.ToString() ?? string.Empty;
+                    return ToCsvRecordValue(dataValueStr);
+                }).ToArray();
 
-                    writer.WriteLine(string.Join(",", valueArray));
-                }
+                recordStringBuilder.AppendLine(ZString.Join(SEPARATOR, valueArray));
             }
+
+            return recordStringBuilder.ToString();
         }
 
         /// <summary>
