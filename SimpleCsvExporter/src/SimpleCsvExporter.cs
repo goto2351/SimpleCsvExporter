@@ -23,7 +23,7 @@ namespace SimpleCsvExporter
             var csvStringBuilder = ZString.CreateStringBuilder();
 
             // ヘッダー
-            csvStringBuilder.AppendLine(ZString.Join(SEPARATOR, recordProcessor.GetFieldNameArray()));
+            csvStringBuilder.AppendLine(ZString.Join(SEPARATOR, recordProcessor.GetFieldNameList()));
 
             // レコード
             var recordValueList = recordProcessor.GetRecordValueList();

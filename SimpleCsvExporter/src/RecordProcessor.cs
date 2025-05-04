@@ -11,7 +11,7 @@ namespace SimpleCsvExporter
     /// <summary>
     /// 出力対象の型とListから出力内容を生成する
     /// </summary>
-    internal class RecordProcessor<T> : IRecordProcessor
+    public class RecordProcessor<T> : IRecordProcessor
     {
         private FieldInfo[] _targetFieldArray;
         private IEnumerable<T> _dataList;
@@ -43,7 +43,7 @@ namespace SimpleCsvExporter
         /// <summary>
         /// 出力対象のフィールド名のリストを取得する
         /// </summary>
-        public List<string> GetFieldNameArray()
+        public List<string> GetFieldNameList()
         {
             // CsvColumn属性から出力するフィールド名を取得
             return _targetFieldArray.Select(x => x.GetCustomAttribute<CsvColumn>()?.Name ?? string.Empty).ToList();

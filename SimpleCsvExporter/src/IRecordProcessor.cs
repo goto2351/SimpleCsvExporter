@@ -14,7 +14,7 @@ namespace SimpleCsvExporter
         /// <summary>
         /// 出力対象のフィールド名のリストを取得する
         /// </summary>
-        public List<string> GetFieldNameArray();
+        public List<string> GetFieldNameList();
 
         /// <summary>
         /// 出力対象フィールドの内容のリストを取得する
