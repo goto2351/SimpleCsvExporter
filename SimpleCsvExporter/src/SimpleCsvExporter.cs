@@ -13,7 +13,24 @@ namespace SimpleCsvExporter
     /// </summary>
     public class SimpleCsvExporter
     {
-        private const string SEPARATOR = ",";
+        public class Setting
+        {
+            public string Separator { get; init; }
+
+            private const string DEFAULT_SEPARATOR = ",";
+
+            public Setting(string separator = DEFAULT_SEPARATOR)
+            {
+                Separator = separator;
+            }
+        }
+
+        private Setting _setting;
+
+        public  SimpleCsvExporter(Setting setting = null)
+        {
+            _setting = setting != null ? setting : new Setting();
+        }
 
         public  void ExportCsv<T>(IEnumerable<T> dataList, string filePath)
         {
@@ -23,13 +40,13 @@ namespace SimpleCsvExporter
             var csvStringBuilder = ZString.CreateStringBuilder();
 
             // ヘッダー
-            csvStringBuilder.AppendLine(ZString.Join(SEPARATOR, recordProcessor.GetFieldNameList()));
+            csvStringBuilder.AppendLine(ZString.Join(_setting.Separator, recordProcessor.GetFieldNameList()));
 
             // レコード
             var recordValueList = recordProcessor.GetRecordValueList();
             foreach (var record in recordValueList)
             {
-                csvStringBuilder.AppendLine(ZString.Join(SEPARATOR, record));
+                csvStringBuilder.AppendLine(ZString.Join(_setting.Separator, record));
             }
 
             // CSVを出力する
