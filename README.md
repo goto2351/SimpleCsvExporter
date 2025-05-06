@@ -11,9 +11,11 @@ public class SampleClass
     public string Value2;
 }
 
+using SimpleCsvExporter;
+
 var dataList = new List<SampleClass>();
 // Add records to SampleClass
 
-var exporter = new SimpleCsvExporter.SimpleCsvExporter();
+var exporter = new CsvExporter();
 exporter.ExportCsv(dataList, "output path");
 ```
