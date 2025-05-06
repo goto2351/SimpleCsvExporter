@@ -11,7 +11,7 @@ namespace SimpleCsvExporter
     /// <summary>
     /// CsvColumn属性の付いたフィールドを対象としてCSVを出力する
     /// </summary>
-    public class SimpleCsvExporter
+    public class CsvExporter
     {
         public class Setting
         {
@@ -27,7 +27,7 @@ namespace SimpleCsvExporter
 
         private Setting _setting;
 
-        public  SimpleCsvExporter(Setting setting = null)
+        public  CsvExporter(Setting setting = null)
         {
             _setting = setting != null ? setting : new Setting();
         }
